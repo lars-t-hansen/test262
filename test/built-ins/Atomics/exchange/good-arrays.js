@@ -16,8 +16,8 @@ for ( let View of int_views ) {
     var view = new View(sab, 32, 20);
     var control = new View(ab, 0, 2);
 
+    // Exchange returns the value previously in the array
     view[8] = 0;
-
     assert.sameValue(Atomics.exchange(view, 8, 10), 0);
     assert.sameValue(view[8], 10);
 
@@ -25,16 +25,17 @@ for ( let View of int_views ) {
     control[0] = -5;
     assert.sameValue(view[8], control[0]);
 
-    // Rudimentary tests for sign extension and chopping.
-
+    // Result is subject to coercion
     view[3] = -5;
     control[0] = -5;
     assert.sameValue(Atomics.exchange(view, 3, 0), control[0]);
 
+    // Result is subject to chopping
     control[0] = 12345;
     view[3] = 12345;
     assert.sameValue(Atomics.exchange(view, 3, 0), control[0]);
 
+    // And again
     control[0] = 123456789;
     view[3] = 123456789;
     assert.sameValue(Atomics.exchange(view, 3, 0), control[0]);

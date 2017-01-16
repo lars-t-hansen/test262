@@ -15,8 +15,8 @@ for ( let View of int_views ) {
     var view = new View(sab, 32, 20);
     var control = new View(ab, 0, 2);
 
+    // Result is subject to chopping
     view[8] = 0x33333333;
-
     control[0] = 0x33333333;
     assert.sameValue(Atomics.xor(view, 8, 0x55555555), control[0]);
 
@@ -27,18 +27,19 @@ for ( let View of int_views ) {
     control[0] = 0x96969696;
     assert.sameValue(view[8], control[0]);
 
-    // Rudimentary tests for sign extension and chopping.
-
+    // Result is negative and subject to coercion
     view[3] = -5;
     control[0] = -5;
     assert.sameValue(Atomics.xor(view, 3, 0), control[0]);
     assert.sameValue(view[3], control[0]);
 
+    // Result is subject to chopping
     control[0] = 12345;
     view[3] = 12345;
     assert.sameValue(Atomics.xor(view, 3, 0), control[0]);
     assert.sameValue(view[3], control[0]);
 
+    // And again
     control[0] = 123456789;
     view[3] = 123456789;
     assert.sameValue(Atomics.xor(view, 3, 0), control[0]);

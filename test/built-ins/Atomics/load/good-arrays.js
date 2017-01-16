@@ -16,14 +16,17 @@ for ( let View of int_views ) {
     var view = new View(sab, 32, 20);
     var control = new View(ab, 0, 2);
 
+    // Result is subject to coercion
     view[3] = -5;
     control[0] = -5;
     assert.sameValue(Atomics.load(view, 3), control[0]);
 
+    // Result is subject to chopping
     control[0] = 12345;
     view[3] = 12345;
     assert.sameValue(Atomics.load(view, 3), control[0]);
 
+    // And again
     control[0] = 123456789;
     view[3] = 123456789;
     assert.sameValue(Atomics.load(view, 3), control[0]);

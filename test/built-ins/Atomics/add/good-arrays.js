@@ -14,28 +14,28 @@ for ( let View of int_views ) {
     // Make it interesting - use non-zero byteOffsets and non-zero indexes.
 
     var view = new View(sab, 32, 20);
+    var control = new View(ab, 0, 2);
 
-    view[3] = 0;
+    // Add positive number
     view[8] = 0;
-
     assert.sameValue(Atomics.add(view, 8, 10), 0);
     assert.sameValue(view[8], 10);
 
+    // Add negative number
     assert.sameValue(Atomics.add(view, 8, -5), 10);
     assert.sameValue(view[8], 5);
 
-    // Rudimentary tests for sign extension and chopping.
-
-    var control = new View(ab, 0, 2);
-
+    // Result is "negative" though subject to coercion
     view[3] = -5;
     control[0] = -5;
     assert.sameValue(Atomics.add(view, 3, 0), control[0]);
 
+    // Result is subject to chopping
     control[0] = 12345;
     view[3] = 12345;
     assert.sameValue(Atomics.add(view, 3, 0), control[0]);
 
+    // And again
     control[0] = 123456789;
     view[3] = 123456789;
     assert.sameValue(Atomics.add(view, 3, 0), control[0]);

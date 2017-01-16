@@ -15,10 +15,18 @@ for ( let View of int_views ) {
 
     var view = new View(sab, 32, 20);
     var control = new View(ab, 0, 2);
-    var val;
 
-    for ( let val of [10, -5, 12345, 123456789, Math.PI, "33", { valueOf: () => 33 }, undefined] ) {
-	// Atomics.store returns its third argument converted to Integer.
+    for ( let val of [10,
+		      -5,
+		      12345,
+		      123456789,
+		      Math.PI,
+		      "33",
+		      { valueOf: () => 33 },
+		      undefined] )
+    {
+	// Atomics.store returns its third argument converted to Integer, not
+	// the input value nor the value that was stored.
 	assert.sameValue(Atomics.store(view, 3, val), ToInteger(val));
 
 	control[0] = val;
