@@ -10,6 +10,13 @@ var ab = new ArrayBuffer(16);
 
 var int_views = [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array];
 
+var good_indices = [ (view) => 0/-1, // -0
+		     (view) => '-0',
+		     (view) => view.length - 1,
+		     (view) => ({ valueOf: () => 0 }),
+		     (view) => ({ toString: () => '0', valueOf: false }) // non-callable valueOf triggers invocation of toString
+		   ];
+
 for ( let View of int_views ) {
     // Make it interesting - use non-zero byteOffsets and non-zero indexes.
 
@@ -39,4 +46,14 @@ for ( let View of int_views ) {
     control[0] = 123456789;
     view[3] = 123456789;
     assert.sameValue(Atomics.exchange(view, 3, 0), control[0]);
+
+    // In-bounds boundary cases for indexing
+    for ( let IdxGen of good_indices ) {
+	let Idx = IdxGen(view);
+	view.fill(0);
+	// Atomics.store() computes an index from Idx in the same way as other
+	// Atomics operations, not quite like view[Idx].
+	Atomics.store(view, Idx, 37);
+	assert.sameValue(Atomics.exchange(view, Idx, 0), 37);
+    }
 }
