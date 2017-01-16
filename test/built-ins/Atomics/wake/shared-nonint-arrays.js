@@ -8,7 +8,8 @@ description: >
 
 var sab = new SharedArrayBuffer(1024);
 
-var other_views = [Uint8ClampedArray, Float32Array, Float64Array];
+var other_views = [Int8Array, Uint8Array, Int16Array, Uint16Array, Uint32Array,
+		   Uint8ClampedArray, Float32Array, Float64Array];
 
 for ( var View of other_views ) {
     var view = new View(sab);
