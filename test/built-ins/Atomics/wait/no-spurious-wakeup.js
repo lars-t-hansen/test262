@@ -15,6 +15,7 @@ $.agent.receiveBroadcast(function (sab, id) {
   Atomics.wait(ia, 0, 0);
   var diff = Date.now() - then;	// Should be about 1000 ms
   $.agent.report(diff);
+  $.agent.leaving();
 })
 `);
 
