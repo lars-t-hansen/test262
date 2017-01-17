@@ -26,5 +26,11 @@ $.agent.sleep(500);		// Give the agent a chance to wait
 Atomics.store(ia, 0, 1);	// Change the value, should not wake the agent
 $.agent.sleep(500);		// Wait some more so that we can tell
 Atomics.wake(ia, 0);		// Really wake it up
-$.agent.sleep(500);		// Give it time to report back
-assert.sameValue(Math.abs(($.agent.getReport()|0) - 1000) < 100, true);
+assert.sameValue(Math.abs((getReport()|0) - 1000) < 100, true);
+
+function getReport() {
+    var r;
+    while ((r = $.agent.getReport()) == null)
+	$.agent.sleep(100);
+    return r;
+}

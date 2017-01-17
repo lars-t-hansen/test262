@@ -20,6 +20,12 @@ var ia = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
 $.agent.broadcast(ia.buffer);
 $.agent.sleep(500);		// Give the agent a chance to wait
 Atomics.wake(ia, 0);
-$.agent.sleep(500);		// Give the agent a chance to report back
-assert.sameValue($.agent.getReport(), "ok");
+assert.sameValue(getReport(), "ok");
+
+function getReport() {
+    var r;
+    while ((r = $.agent.getReport()) == null)
+	$.agent.sleep(100);
+    return r;
+}
 

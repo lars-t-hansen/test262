@@ -10,7 +10,7 @@ $.agent.start(
 `
 $.agent.receiveBroadcast(function (sab, id) {
   var ia = new Int32Array(sab);
-  $.agent.report(Atomics.wait(ia, 0, 0, Math.NaN));  // NaN => Infinity
+  $.agent.report(Atomics.wait(ia, 0, 0, NaN));  // NaN => Infinity
   $.agent.leaving();
 })
 `);
@@ -18,8 +18,14 @@ $.agent.receiveBroadcast(function (sab, id) {
 var ia = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
 
 $.agent.broadcast(ia.buffer);
-$.agent.sleep(1000);		// Ample time
+$.agent.sleep(500);		// Ample time
 assert.sameValue($.agent.getReport(), null);
 Atomics.wake(ia, 0);
-$.agent.sleep(500);
-assert.sameValue($.agent.getReport(), "ok");
+assert.sameValue(getReport(), "ok");
+
+function getReport() {
+    var r;
+    while ((r = $.agent.getReport()) == null)
+	$.agent.sleep(100);
+    return r;
+}

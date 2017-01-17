@@ -3,17 +3,14 @@
 
 /*---
 description: >
-  Test that Atomics.wait returns the right result when it timed out and that
-  the time to time out is reasonable.
+  Test that Atomics.wake wakes zero waiters if the count is NaN
 ---*/
 
 $.agent.start(
 `
-$.agent.receiveBroadcast(function (sab, id) {
+$.agent.receiveBroadcast(function (sab) {
   var ia = new Int32Array(sab);
-  var then = Date.now();
-  $.agent.report(Atomics.wait(ia, 0, 0, 500)); // Timeout 500ms
-  $.agent.report(Date.now() - then);
+  $.agent.report(Atomics.wait(ia, 0, 0, 1000)); // We will timeout eventually
   $.agent.leaving();
 })
 `);
@@ -21,8 +18,9 @@ $.agent.receiveBroadcast(function (sab, id) {
 var ia = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
 
 $.agent.broadcast(ia.buffer);
+$.agent.sleep(500);		                // Give the agent a chance to wait
+assert.sameValue(Atomics.wake(ia, 0, NaN), 0);	// Don't actually wake it
 assert.sameValue(getReport(), "timed-out");
-assert.sameValue(Math.abs((getReport()|0) - 500) < 100, true);
 
 function getReport() {
     var r;
